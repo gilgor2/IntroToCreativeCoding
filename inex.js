@@ -3,8 +3,8 @@ function windowResized() {
 }
 // constants
 let backgroundColor1, backgroundColor2, backgroundColor3;
-const pointSpeedNum = 1300; // 파고
-const interval = 360; // 60프레임(1초)마다 실행
+const pointSpeedNum = 1400; // 파고
+const interval = 300; // 60프레임(1초)마다 실행
 
 //var
 let counter = 0;
@@ -48,7 +48,7 @@ function setup() {
   });
 
   wave1 = new Wave(color(240, 255, 254, 20), -1420, false, 40 + random(70));
-  wave2 = new Wave(color(240, 240, 254, 20), -720, false, 30 + random(70));
+  wave2 = new Wave(color(240, 240, 254, 20), -580, false, 30 + random(70));
 
   wave3 = new Wave(color(224, 213, 198), 0, true);
 }
@@ -136,11 +136,12 @@ export function Wave(waveColor, startY, isLast, startTimingGap) {
   this.startTimingGap = startTimingGap;
 
   this.randomValArr = [];
-  this.randomRange = 24;
+  this.randomRange = 30;
 
   this.peakPointArr = [];
-  this.peakOpacity = 120;
+  this.peakPointArrConst = [[0, 0]];
 
+  this.peakOpacity = 120;
   //  init
   for (let i = 0; i < this.pointCount; i++) {
     this.pointArr.push(new Point(this.pointGap * i, startY));
@@ -186,7 +187,7 @@ export function Wave(waveColor, startY, isLast, startTimingGap) {
           point[1] -
             sin((counter / interval) * PI) *
               (this.randomValArr[i] + 5) *
-              (isLast ? 4 : 1)
+              (isLast ? 3 : 1)
         );
       });
       curveVertex(
@@ -249,11 +250,19 @@ export function Wave(waveColor, startY, isLast, startTimingGap) {
         pointObj.x,
         pointObj.y,
       ]);
+      this.peakPointArrConst = this.pointArr.map((pointObj) => [
+        pointObj.x,
+        pointObj.y,
+      ]);
       this.peakOpacity = 160;
     }
   };
   this.wetSand = () => {
     this.savePeak();
+    // erase face
+    if (counter > (interval / 3) * 2)
+      this.curveVertexByArr(this.peakPointArrConst, backgroundColor1, false);
+    // draw
     this.curveVertexByArr(
       this.peakPointArr,
       color(190, 176, 161, this.peakOpacity),
@@ -325,7 +334,7 @@ function gotFaces(err, res) {
   faceapi.detect(gotFaces);
 }
 var drawFace = () => {
-  if (detections && detections.length > 0 && counter <= (interval / 7) * 4) {
+  if (detections && detections.length > 0) {
     detections.forEach((face) => {
       const positionArr = face.landmarks._positions;
       // text(
@@ -337,7 +346,7 @@ var drawFace = () => {
       // );
       stroke(color(190, 176, 161, 70));
       fill(color(190, 176, 161, 60));
-      strokeWeight(30 + random(2));
+      strokeWeight(20 + random(3));
       // left eyelash
 
       for (let i = 16; i < 20; i++) {
