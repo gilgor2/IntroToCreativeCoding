@@ -46,11 +46,13 @@ function setup() {
   faceapi = ml5.faceApi(video, faceOptions, () => {
     faceapi.detect(gotFaces);
   });
+  backgroundColor2 = color(196, 196, 183); // blue
 
   wave1 = new Wave(color(240, 255, 254, 20), -1420, false, 40 + random(70));
   wave2 = new Wave(color(240, 240, 254, 20), -580, false, 30 + random(70));
 
-  wave3 = new Wave(color(224, 213, 198), 0, true);
+  // wave3 = new Wave(color(224, 213, 198), 0, true);
+  wave3 = new Wave(backgroundColor2, 0, true);
 }
 
 function draw() {
